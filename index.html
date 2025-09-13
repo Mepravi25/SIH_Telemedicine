@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediGram - Enhanced Emergency Telemedicine Platform</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main App Container -->
+    <div id="app" class="app-container">
+        <!-- Header -->
+        <header class="app-header hidden" id="main-header">
+            <div class="header-content">
+                <div class="logo">MediGram</div>
+                <div class="status-indicators">
+                    <span id="connectivity-status" class="status status--success">Online</span>
+                    <div class="cart-indicator" onclick="showScreen('cart')">
+                        <span class="cart-icon">🛒</span>
+                        <span id="cart-count" class="cart-count">0</span>
+                    </div>
+                    <div class="notification-indicator" onclick="showScreen('notifications')" id="notification-indicator">
+                        <span class="notification-icon">🔔</span>
+                        <span id="notification-count" class="notification-count">0</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Screen: Login -->
+        <div id="login-screen" class="screen active">
+            <div class="login-content">
+                <div class="logo-section">
+                    <div class="logo-large">
+                        <div class="logo-icon">📱</div>
+                        <h1>MediGram</h1>
+                        <p class="subtitle">Enhanced Rural Healthcare Access</p>
+                        <p class="stats-text">Serving 173+ Villages • 24/7 Emergency Support</p>
+                    </div>
+                </div>
+                
+                <div class="login-form-container">
+                    <!-- Phone/OTP Login Form -->
+                    <form class="login-form" id="phone-login-form">
+                        <h3>Sign in with Phone Number</h3>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <div class="phone-input-container">
+                                <span class="country-code">+91</span>
+                                <input type="tel" class="form-control phone-input" id="phone-number" placeholder="Enter 10-digit mobile number" maxlength="10" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn--primary btn--full-width">Send OTP</button>
+                    </form>
+
+                    <!-- Email Login Form -->
+                    <form class="login-form hidden" id="email-login-form">
+                        <h3>Sign in with Email</h3>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn btn--primary btn--full-width">Sign In</button>
+                    </form>
+                    
+                    <div class="login-divider">
+                        <span>or continue with</span>
+                    </div>
+                    
+                    <div class="social-login-buttons">
+                        <button class="btn btn--outline btn--full-width social-btn" onclick="showEmailLogin()">
+                            <span class="social-icon">📧</span>
+                            Continue with Email
+                        </button>
+                        <button class="btn btn--outline btn--full-width social-btn" onclick="loginWithFacebook()">
+                            <span class="social-icon">📘</span>
+                            Continue with Facebook
+                        </button>
+                    </div>
+                    
+                    <div class="login-footer">
+                        <a href="#" class="forgot-link" onclick="showPhoneLogin()">Back to Phone Login</a>
+                        <p class="signup-link">Don't have an account? <a href="#">Sign Up</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: OTP Verification -->
+        <div id="otp-screen" class="screen">
+            <div class="login-content">
+                <div class="logo-section">
+                    <div class="logo-large">
+                        <div class="logo-icon">📱</div>
+                        <h1>Verify OTP</h1>
+                        <p class="subtitle">Enter the 6-digit code sent to</p>
+                        <p class="phone-display" id="phone-display">+91 XXXXX XXXXX</p>
+                    </div>
+                </div>
+                
+                <div class="login-form-container">
+                    <form class="login-form" id="otp-verification-form">
+                        <h3>Enter Verification Code</h3>
+                        <div class="otp-input-container">
+                            <input type="text" class="otp-input" maxlength="1" id="otp-1">
+                            <input type="text" class="otp-input" maxlength="1" id="otp-2">
+                            <input type="text" class="otp-input" maxlength="1" id="otp-3">
+                            <input type="text" class="otp-input" maxlength="1" id="otp-4">
+                            <input type="text" class="otp-input" maxlength="1" id="otp-5">
+                            <input type="text" class="otp-input" maxlength="1" id="otp-6">
+                        </div>
+                        <div class="otp-timer">
+                            <span id="otp-timer">Resend OTP in <span id="countdown">30</span>s</span>
+                            <button type="button" class="btn btn--outline resend-btn hidden" id="resend-btn" onclick="resendOTP()">Resend OTP</button>
+                        </div>
+                        <button type="submit" class="btn btn--primary btn--full-width">Verify & Login</button>
+                    </form>
+                    
+                    <div class="login-footer">
+                        <a href="#" class="forgot-link" onclick="showScreen('login')">← Back to Phone Number</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Video Consultation Dashboard -->
+        <div id="consultation-screen" class="screen">
+            <div class="screen-header">
+                <h2>Video Consultation</h2>
+                <div class="connectivity-info">
+                    <span class="status status--success">3 doctors online</span>
+                    <button class="btn btn--secondary btn--sm" onclick="openChat('support')">💬 Support</button>
+                </div>
+            </div>
+            
+            <div class="consultation-content">
+                <!-- Emergency Call Button -->
+                <div class="emergency-banner">
+                    <button class="emergency-btn" onclick="showScreen('emergency')">
+                        🚨 Emergency Consultation
+                        <div class="emergency-subtitle">FOR LIFE-THREATENING EMERGENCIES ONLY</div>
+                    </button>
+                </div>
+
+                <!-- Filter by Specialty -->
+                <div class="doctor-filters">
+                    <h3>Select Specialty</h3>
+                    <div class="specialty-grid">
+                        <button class="specialty-btn active" data-specialty="all">All Doctors</button>
+                        <button class="specialty-btn" data-specialty="General Medicine">General Medicine</button>
+                        <button class="specialty-btn" data-specialty="Pediatrics">Pediatrics</button>
+                        <button class="specialty-btn" data-specialty="Cardiology">Cardiology</button>
+                    </div>
+                </div>
+
+                <!-- Doctor Cards -->
+                <div class="doctors-list" id="doctors-list">
+                    <!-- Doctor cards will be populated by JavaScript -->
+                </div>
+
+                <!-- Photo Sharing Section -->
+                <div class="photo-sharing-section">
+                    <h4>Share Photos/Documents</h4>
+                    <p class="sharing-note">📸 Share symptoms photos or medical documents with your doctor</p>
+                    <div class="photo-upload-buttons">
+                        <button class="btn btn--secondary" onclick="uploadPhoto('camera')">📷 Take Photo</button>
+                        <button class="btn btn--secondary" onclick="uploadPhoto('gallery')">🖼️ From Gallery</button>
+                    </div>
+                    <div id="uploaded-photos" class="uploaded-photos"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Chat Interface -->
+        <div id="chat-screen" class="screen">
+            <div class="chat-header">
+                <button class="back-btn" onclick="goBackFromChat()">← Back</button>
+                <div class="chat-participant-info">
+                    <div class="chat-avatar" id="chat-avatar">👨‍⚕️</div>
+                    <div class="chat-details">
+                        <h3 id="chat-participant-name">Dr. Rajesh Kumar</h3>
+                        <div class="chat-status">
+                            <span class="status-indicator online" id="chat-status-indicator"></span>
+                            <span id="chat-status-text">Online</span>
+                            <span id="chat-typing-indicator" class="typing-indicator hidden">typing...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="btn btn--sm btn--secondary" onclick="startVideoCall()" id="video-call-btn">📹 Video</button>
+                </div>
+            </div>
+            
+            <div class="chat-messages-container" id="chat-messages-container">
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Messages will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <div class="chat-input-container">
+                    <button class="chat-attachment-btn" onclick="attachFile()">📎</button>
+                    <input type="text" class="chat-input" id="chat-input" placeholder="Type your message..." maxlength="500">
+                    <button class="chat-emoji-btn" onclick="toggleEmojiPicker()">😊</button>
+                    <button class="chat-send-btn" id="chat-send-btn" onclick="sendMessage()">➤</button>
+                </div>
+                <div class="quick-replies" id="quick-replies">
+                    <!-- Quick reply buttons will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Emergency Consultation -->
+        <div id="emergency-screen" class="screen">
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('consultation')">← Back</button>
+                <h2>Emergency Consultation</h2>
+                <div class="emergency-alert-indicator">🚨 PRIORITY</div>
+            </div>
+            
+            <div class="emergency-content">
+                <div class="emergency-warning">
+                    <h3>⚠️ Emergency Guidelines</h3>
+                    <div class="guidelines-list">
+                        <p>• FOR LIFE-THREATENING EMERGENCIES ONLY</p>
+                        <p>• Call 108/112 for immediate ambulance if patient is unconscious</p>
+                        <p>• Have patient's medical history ready</p>
+                        <p>• Stay calm and follow doctor's instructions</p>
+                    </div>
+                </div>
+
+                <!-- Emergency Issue Selection -->
+                <div class="emergency-section">
+                    <h4>🚨 Select Emergency Type</h4>
+                    <div class="emergency-types-grid" id="emergency-types">
+                        <!-- Emergency types populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Emergency Chat Button -->
+                <div class="emergency-section">
+                    <h4>📱 Emergency Communication</h4>
+                    <div class="emergency-communication">
+                        <button class="btn btn--primary btn--full-width emergency-chat-btn" onclick="openChat('emergency')">
+                            🚨 Start Emergency Chat
+                            <div class="btn-subtitle">Get immediate assistance through chat</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- On-Duty Emergency Doctors -->
+                <div class="emergency-section">
+                    <h4>👨‍⚕️ On-Duty Emergency Doctors</h4>
+                    <div class="emergency-doctors-list" id="emergency-doctors">
+                        <!-- Emergency doctors populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Emergency Connection Status -->
+                <div class="emergency-connection-status hidden" id="emergency-status">
+                    <div class="status-card">
+                        <div class="status-icon">⚡</div>
+                        <div class="status-text">
+                            <h4 id="connection-status-text">Alerting Emergency Doctors...</h4>
+                            <p id="connection-status-detail">Sending priority notification to available doctors</p>
+                        </div>
+                        <div class="status-timer" id="response-timer">--</div>
+                    </div>
+                </div>
+
+                <!-- Instant Connection -->
+                <div class="instant-connection hidden" id="instant-connection">
+                    <div class="connection-card">
+                        <div class="doctor-responding" id="responding-doctor">
+                            <div class="doctor-avatar">👨‍⚕️</div>
+                            <div class="doctor-info">
+                                <h4 id="responding-doctor-name">Dr. Rajesh Kumar</h4>
+                                <p>Emergency Medicine • Nabha Civil Hospital</p>
+                                <div class="response-time">Responding in <span id="response-countdown">30</span> seconds</div>
+                            </div>
+                        </div>
+                        <button class="btn btn--primary btn--full-width emergency-join-btn" onclick="joinEmergencyCall()">
+                            🔴 Join Emergency Call Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Network Quality Indicator -->
+                <div class="network-quality">
+                    <h5>📡 Connection Quality</h5>
+                    <div class="quality-indicator">
+                        <div class="quality-bars">
+                            <div class="bar active"></div>
+                            <div class="bar active"></div>
+                            <div class="bar active"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                        <span class="quality-text">Good - Video Ready</span>
+                    </div>
+                    <p class="quality-note">Audio-first mode will activate automatically if connection is weak</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Emergency Video Call -->
+        <div id="emergency-call-screen" class="screen">
+            <div class="video-call-container emergency-call">
+                <div class="video-header emergency-header">
+                    <div class="call-info">
+                        <h3 id="emergency-doctor-name">Dr. Rajesh Kumar</h3>
+                        <p class="call-status">🚨 Emergency Consultation • <span id="emergency-call-time">00:45</span></p>
+                        <div class="emergency-type-badge" id="emergency-type-badge">🚑 Accident/Injury</div>
+                    </div>
+                    <div class="call-controls-header">
+                        <button class="control-btn network-btn" onclick="toggleNetworkMode()">
+                            <span id="network-mode">📹</span>
+                        </button>
+                        <button class="control-btn chat-btn" onclick="openChatDuringCall()">💬</button>
+                    </div>
+                </div>
+                
+                <div class="video-area">
+                    <div class="main-video">
+                        <div class="video-placeholder doctor-video">
+                            <span class="video-avatar">👨‍⚕️</span>
+                            <p id="emergency-doctor-display">Dr. Rajesh Kumar</p>
+                        </div>
+                    </div>
+                    <div class="self-video">
+                        <div class="video-placeholder">
+                            <span class="video-avatar">👤</span>
+                            <p>You</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Triage Controls -->
+                <div class="emergency-triage">
+                    <div class="triage-alert hidden" id="triage-alert">
+                        <div class="alert-content">
+                            <h4>🚨 Doctor is requesting ambulance dispatch</h4>
+                            <p>Emergency severity assessment: CRITICAL</p>
+                            <div class="triage-actions">
+                                <button class="btn btn--primary" onclick="confirmAmbulanceRequest()">✅ Confirm Ambulance Request</button>
+                                <button class="btn btn--outline" onclick="declineAmbulanceRequest()">❌ Decline</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Call Controls -->
+                <div class="call-controls emergency-controls">
+                    <button class="control-btn" onclick="toggleMute()">
+                        <span id="mute-icon">🎤</span>
+                    </button>
+                    <button class="control-btn" onclick="toggleVideo()">
+                        <span id="video-icon">📹</span>
+                    </button>
+                    <button class="control-btn share-btn" onclick="sharePhoto()">
+                        <span>📷</span>
+                    </button>
+                    <button class="control-btn location-btn" onclick="shareEmergencyLocation()">
+                        <span>📍</span>
+                    </button>
+                    <button class="control-btn chat-control-btn" onclick="openChatDuringCall()">
+                        <span>💬</span>
+                    </button>
+                    <button class="control-btn end-call-btn" onclick="endEmergencyCall()">
+                        <span>📞</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Ambulance Dispatch -->
+        <div id="ambulance-screen" class="screen">
+            <div class="screen-header">
+                <h2>🚑 Ambulance Dispatch</h2>
+                <div class="dispatch-status">DISPATCHING</div>
+            </div>
+            
+            <div class="ambulance-content">
+                <div class="dispatch-alert">
+                    <h3>🚨 Emergency Ambulance Requested</h3>
+                    <p>Doctor has assessed the situation as requiring immediate medical transport</p>
+                </div>
+
+                <div class="ambulance-info">
+                    <h4>📍 Your Location</h4>
+                    <div class="location-card">
+                        <div class="location-text">
+                            <p><strong>Detected Address:</strong> Village Nabha, Punjab 147201</p>
+                            <p><strong>Coordinates:</strong> 30.3752° N, 76.1524° E</p>
+                        </div>
+                        <button class="btn btn--outline" onclick="updateLocation()">📍 Update Location</button>
+                    </div>
+                </div>
+
+                <div class="ambulance-services">
+                    <h4>🚑 Dispatching Ambulance</h4>
+                    <div class="service-card priority">
+                        <div class="service-header">
+                            <h5>Nabha Emergency Services</h5>
+                            <div class="dispatch-badge">🚨 DISPATCHED</div>
+                        </div>
+                        <div class="service-details">
+                            <p><strong>Phone:</strong> 108</p>
+                            <p><strong>Location:</strong> Nabha Civil Hospital</p>
+                            <p><strong>ETA:</strong> 8-12 minutes</p>
+                        </div>
+                        <div class="tracking-indicator">
+                            <div class="tracking-dot"></div>
+                            <span>Ambulance en route to your location</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="emergency-contacts-notify">
+                    <h4>📱 Family Notification</h4>
+                    <div class="notification-status">
+                        <p>✅ Emergency SMS sent to registered family contacts</p>
+                        <p>✅ Location shared with ambulance service</p>
+                        <p>✅ Medical history forwarded to receiving hospital</p>
+                    </div>
+                </div>
+
+                <div class="emergency-actions">
+                    <button class="btn btn--primary btn--full-width" onclick="callAmbulanceService()">
+                        📞 Call Ambulance Service (108)
+                    </button>
+                    <button class="btn btn--outline btn--full-width" onclick="backToEmergencyCall()">
+                        ← Continue Emergency Consultation
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Health Records -->
+        <div id="health-records-screen" class="screen">
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('consultation')">← Back</button>
+                <h2>Health Records</h2>
+                <span class="offline-indicator">📱 Available Offline</span>
+            </div>
+            
+            <div class="records-content">
+                <!-- Medicine Schedule -->
+                <div class="medicine-schedule">
+                    <h3>💊 Medicine Schedule</h3>
+                    <div class="schedule-tabs">
+                        <button class="schedule-tab active" data-time="morning">🌅 Morning</button>
+                        <button class="schedule-tab" data-time="noon">☀️ Noon</button>
+                        <button class="schedule-tab" data-time="night">🌙 Night</button>
+                    </div>
+                    <div class="medicine-schedule-content" id="medicine-schedule-content">
+                        <!-- Medicine schedules populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Recent Records -->
+                <div class="recent-records">
+                    <h4>📋 Recent Medical Records</h4>
+                    <div class="record-items" id="recent-records">
+                        <!-- Recent records populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Medicine Finder with Cart -->
+        <div id="medicine-finder-screen" class="screen">
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('consultation')">← Back</button>
+                <h2>Medicine Finder</h2>
+                <div class="header-actions">
+                    <button class="btn btn--secondary btn--sm" onclick="openChat('pharmacist')">💬 Chat Pharmacist</button>
+                    <button class="cart-btn" onclick="showScreen('cart')">
+                        🛒 Cart (<span id="cart-count-header">0</span>)
+                    </button>
+                </div>
+            </div>
+            
+            <div class="medicine-content">
+                <!-- Search Section -->
+                <div class="search-section">
+                    <div class="search-bar">
+                        <input type="text" class="form-control" placeholder="Search medicine..." id="medicine-search">
+                        <button class="btn btn--primary" onclick="searchMedicines()">Search</button>
+                    </div>
+                </div>
+
+                <!-- Prescription Upload -->
+                <div class="prescription-upload">
+                    <h4>📋 Upload/Create Prescription</h4>
+                    <p class="upload-note">Upload prescription photo or create a digital prescription document</p>
+                    <div class="upload-buttons">
+                        <button class="btn btn--secondary" onclick="uploadPrescription('camera')">📷 Take Photo</button>
+                        <button class="btn btn--secondary" onclick="uploadPrescription('gallery')">🖼️ From Gallery</button>
+                        <button class="btn btn--primary" onclick="showScreen('prescription-creator')">📝 Create Document</button>
+                    </div>
+                    <div id="prescription-uploads" class="prescription-uploads"></div>
+                </div>
+
+                <!-- Search Results with Stock Status -->
+                <div class="search-results hidden" id="search-results">
+                    <h4>🔍 Search Results</h4>
+                    <div class="medicine-results" id="medicine-results">
+                        <!-- Search results populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Pharmacy Stores -->
+                <div class="pharmacy-stores">
+                    <h4>🏪 Nearby Pharmacies</h4>
+                    <div class="store-cards" id="pharmacy-stores">
+                        <!-- Pharmacy stores populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Quick Medicines -->
+                <div class="quick-medicines">
+                    <h4>🔍 Common Medicines</h4>
+                    <div class="medicine-grid" id="common-medicines">
+                        <!-- Common medicines populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Prescription Creator -->
+        <div id="prescription-creator-screen" class="screen">
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('medicine-finder')">← Back</button>
+                <h2>Create Prescription Document</h2>
+                <button class="save-prescription-btn btn btn--primary" onclick="savePrescription()">💾 Save</button>
+            </div>
+            
+            <div class="prescription-creator-content">
+                <!-- Language Selection -->
+                <div class="language-selection">
+                    <h4>🌐 Select Language</h4>
+                    <div class="language-tabs">
+                        <button class="language-tab active" data-lang="english" onclick="selectLanguage('english')">English</button>
+                        <button class="language-tab" data-lang="hindi" onclick="selectLanguage('hindi')">हिंदी</button>
+                        <button class="language-tab" data-lang="punjabi" onclick="selectLanguage('punjabi')">ਪੰਜਾਬੀ</button>
+                    </div>
+                </div>
+
+                <!-- Template Selection -->
+                <div class="template-section">
+                    <h4>📋 Quick Templates</h4>
+                    <div class="template-buttons">
+                        <button class="btn btn--outline btn--sm" onclick="useTemplate('fever')">🤒 Fever Treatment</button>
+                        <button class="btn btn--outline btn--sm" onclick="useTemplate('diabetes')">🩺 Diabetes Care</button>
+                        <button class="btn btn--outline btn--sm" onclick="useTemplate('bp')">💓 Blood Pressure</button>
+                        <button class="btn btn--outline btn--sm" onclick="useTemplate('antibiotic')">💊 Antibiotic Course</button>
+                    </div>
+                </div>
+
+                <!-- Prescription Editor -->
+                <div class="prescription-editor">
+                    <div class="editor-header">
+                        <h4>✏️ Prescription Details</h4>
+                        <button class="btn btn--secondary btn--sm" onclick="startVoiceInput()">🎤 Voice Input</button>
+                    </div>
+                    
+                    <div class="prescription-form">
+                        <div class="form-group">
+                            <label class="form-label">Patient Information</label>
+                            <input type="text" class="form-control" id="patient-name" placeholder="Patient Name">
+                            <input type="number" class="form-control" id="patient-age" placeholder="Age" style="margin-top: 8px;">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Chief Complaint / मुख्य समस्या / ਮੁੱਖ ਸਮੱਸਿਆ</label>
+                            <textarea class="form-control" id="chief-complaint" rows="3" placeholder="Describe the main symptoms..."></textarea>
+                        </div>
+
+                        <div class="medicines-section">
+                            <div class="medicines-header">
+                                <label class="form-label">Medicines / दवाइयाँ / ਦਵਾਈਆਂ</label>
+                                <button class="btn btn--primary btn--sm" onclick="addMedicineRow()">+ Add Medicine</button>
+                            </div>
+                            <div class="medicine-rows" id="medicine-rows">
+                                <!-- Medicine rows populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Special Instructions / विशेष निर्देश / ਖਾਸ ਹਿਦਾਇਤਾਂ</label>
+                            <textarea class="form-control" id="special-instructions" rows="3" placeholder="Additional care instructions..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Follow-up / अगली मुलाकात / ਅਗਲੀ ਮੁਲਾਕਾਤ</label>
+                            <select class="form-control" id="followup-duration">
+                                <option value="">Select follow-up time</option>
+                                <option value="3days">3 दिन / 3 ਦਿਨ / 3 Days</option>
+                                <option value="1week">1 सप्ताह / 1 ਹਫ਼ਤਾ / 1 Week</option>
+                                <option value="2weeks">2 सप्ताह / 2 ਹਫ਼ਤੇ / 2 Weeks</option>
+                                <option value="1month">1 महीना / 1 ਮਹੀਨਾ / 1 Month</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="prescription-preview">
+                    <h4>👀 Preview</h4>
+                    <div class="preview-content" id="prescription-preview">
+                        <!-- Preview populated by JavaScript -->
+                    </div>
+                    <div class="preview-actions">
+                        <button class="btn btn--outline" onclick="downloadPrescription()">📄 Download PDF</button>
+                        <button class="btn btn--secondary" onclick="sharePrescription()">📱 Share via WhatsApp</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Notifications -->
+        <div id="notifications-screen" class="screen">
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('consultation')">← Back</button>
+                <h2>Notifications</h2>
+                <button class="clear-notifications-btn btn btn--outline btn--sm" onclick="clearAllNotifications()">Clear All</button>
+            </div>
+            
+            <div class="notifications-content">
+                <div class="notifications-list" id="notifications-list">
+                    <!-- Notifications populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Shopping Cart -->
+        <div id="cart-screen" class="screen">
+            <div class="screen-header">
+                <button class="back-btn" onclick="showScreen('medicine-finder')">← Back</button>
+                <h2>Shopping Cart</h2>
+            </div>
+            
+            <div class="cart-content">
+                <div class="cart-items" id="cart-items">
+                    <!-- Cart items populated by JavaScript -->
+                </div>
+                
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="cart-subtotal">₹0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery:</span>
+                        <span id="delivery-fee">₹30</span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span>Total:</span>
+                        <span id="cart-total">₹30</span>
+                    </div>
+                </div>
+                
+                <div class="cart-actions">
+                    <button class="btn btn--outline btn--full-width" onclick="clearCart()">Clear Cart</button>
+                    <button class="btn btn--primary btn--full-width" onclick="placeOrder()" id="place-order-btn">
+                        Place Order
+                    </button>
+                </div>
+
+                <!-- Order Tracking -->
+                <div class="order-tracking hidden" id="order-tracking">
+                    <h4>📦 Order Status</h4>
+                    <div class="tracking-steps">
+                        <div class="tracking-step active">
+                            <span class="step-icon">✅</span>
+                            <span class="step-text">Order Placed</span>
+                        </div>
+                        <div class="tracking-step">
+                            <span class="step-icon">📋</span>
+                            <span class="step-text">Pharmacist Review</span>
+                        </div>
+                        <div class="tracking-step">
+                            <span class="step-icon">📦</span>
+                            <span class="step-text">Preparing Order</span>
+                        </div>
+                        <div class="tracking-step">
+                            <span class="step-icon">🚚</span>
+                            <span class="step-text">Out for Delivery</span>
+                        </div>
+                    </div>
+                    <div class="pharmacist-contact">
+                        <p>📞 Pharmacist will call/SMS if any items are unavailable</p>
+                        <button class="btn btn--outline" onclick="openChat('pharmacist')">💬 Chat Pharmacist</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen: Video Call -->
+        <div id="video-call-screen" class="screen">
+            <div class="video-call-container">
+                <div class="video-header">
+                    <div class="call-info">
+                        <h3 id="doctor-name-call">Dr. Rajesh Kumar</h3>
+                        <p class="call-status">Connected • 02:35</p>
+                    </div>
+                    <div class="call-controls-header">
+                        <button class="btn btn--outline minimize-btn">−</button>
+                        <button class="control-btn chat-btn" onclick="openChatDuringCall()">💬</button>
+                    </div>
+                </div>
+                
+                <div class="video-area">
+                    <div class="main-video">
+                        <div class="video-placeholder doctor-video">
+                            <span class="video-avatar">👨‍⚕️</span>
+                            <p>Dr. Rajesh Kumar</p>
+                        </div>
+                    </div>
+                    <div class="self-video">
+                        <div class="video-placeholder">
+                            <span class="video-avatar">👤</span>
+                            <p>You</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat during call -->
+                <div class="call-chat hidden" id="call-chat">
+                    <div class="chat-messages" id="call-chat-messages">
+                        <div class="chat-message doctor-message">
+                            <strong>Dr. Kumar:</strong> Please describe your symptoms
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" placeholder="Type a message..." id="call-chat-input">
+                        <button class="btn btn--primary" onclick="sendCallMessage()">Send</button>
+                    </div>
+                </div>
+
+                <div class="call-controls">
+                    <button class="control-btn" onclick="toggleMute()">
+                        <span id="mute-icon">🎤</span>
+                    </button>
+                    <button class="control-btn" onclick="toggleVideo()">
+                        <span id="video-icon">📹</span>
+                    </button>
+                    <button class="control-btn share-btn" onclick="sharePhoto()">
+                        <span>📷</span>
+                    </button>
+                    <button class="control-btn chat-control-btn" onclick="toggleCallChat()">
+                        <span>💬</span>
+                    </button>
+                    <button class="control-btn end-call-btn" onclick="endCall()">
+                        <span>📞</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav hidden" id="bottom-nav">
+            <div class="nav-item active" onclick="showScreen('consultation')" data-screen="consultation">
+                <div class="nav-icon">📹</div>
+                <span>Consult</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('health-records')" data-screen="health-records">
+                <div class="nav-icon">📋</div>
+                <span>Records</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('medicine-finder')" data-screen="medicine-finder">
+                <div class="nav-icon">💊</div>
+                <span>Medicine</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('emergency')" data-screen="emergency">
+                <div class="nav-icon">🚨</div>
+                <span>Emergency</span>
+            </div>
+            <div class="nav-item" onclick="showScreen('cart')" data-screen="cart">
+                <div class="nav-icon">🛒</div>
+                <span>Cart</span>
+            </div>
+        </nav>
+
+        <!-- Alternative Medicine Modal -->
+        <div id="alternatives-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Alternative Medicines Available</h3>
+                    <button class="modal-close" onclick="closeModal('alternatives-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="original-medicine" id="original-medicine">
+                        <!-- Original medicine info -->
+                    </div>
+                    <div class="alternatives-list" id="alternatives-list">
+                        <!-- Alternative medicines list -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctor Approval Modal -->
+        <div id="doctor-approval-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Request Doctor Approval</h3>
+                    <button class="modal-close" onclick="closeModal('doctor-approval-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="approval-details" id="approval-details">
+                        <!-- Approval request details -->
+                    </div>
+                    <div class="approval-form">
+                        <div class="form-group">
+                            <label class="form-label">Additional Notes (Optional)</label>
+                            <textarea class="form-control" id="approval-notes" rows="3" placeholder="Any additional information for the doctor..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--outline" onclick="closeModal('doctor-approval-modal')">Cancel</button>
+                    <button class="btn btn--primary" onclick="submitApprovalRequest()">Send Request</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Upload Modal -->
+        <div id="photo-upload-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Upload Photo</h3>
+                    <button class="modal-close" onclick="closeModal('photo-upload-modal')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="upload-area" id="photo-upload-area">
+                        <p>📷 Take a photo or select from gallery</p>
+                        <input type="file" accept="image/*" capture="camera" id="camera-input" class="hidden">
+                        <input type="file" accept="image/*" id="gallery-input" class="hidden">
+                        <div class="upload-buttons">
+                            <button class="btn btn--primary" onclick="document.getElementById('camera-input').click()">Camera</button>
+                            <button class="btn btn--secondary" onclick="document.getElementById('gallery-input').click()">Gallery</button>
+                        </div>
+                    </div>
+                    <div id="photo-preview" class="photo-preview hidden"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--outline" onclick="closeModal('photo-upload-modal')">Cancel</button>
+                    <button class="btn btn--primary" onclick="confirmPhotoUpload()">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
